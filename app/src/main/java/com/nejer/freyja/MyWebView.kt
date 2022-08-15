@@ -12,6 +12,16 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
     init {
         loadUrl("https://google.com")
         Log.d("tag", "first activate")
+        settings.apply {
+            useWideViewPort = true
+            loadWithOverviewMode = true
+            domStorageEnabled = true
+            allowContentAccess = true
+            allowFileAccess = true
+            databaseEnabled = true
+            mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+        }
+
 
 
         webViewClient = object : WebViewClient() {

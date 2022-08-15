@@ -12,16 +12,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import com.nejer.freyja.models.Branch
@@ -59,6 +63,7 @@ fun TopBar(content: @Composable () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Browser(screen: MutableState<Int>) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -66,6 +71,7 @@ fun Browser(screen: MutableState<Int>) {
             var url by remember {
                 mutableStateOf("google.com")
             }
+            val focusManager = LocalFocusManager.current
 
             IconButton(onClick = { screen.value = 1 }) {
                 Icon(
@@ -74,22 +80,32 @@ fun Browser(screen: MutableState<Int>) {
                 )
             }
 
-            TextField(value = url, modifier = Modifier.weight(1f), onValueChange = {
-                if (it.lastOrNull() == '\n') {
-                    APP.webView.loadUrl(url)
-                } else {
+            OutlinedTextField(
+                value = url,
+                modifier = Modifier.weight(1f),
+                onValueChange = {
                     url = it
-                }
+                },
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
+                    focusManager.clearFocus()
+                    APP.webView.loadUrl(url)
+                }),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    cursorColor = Color.Black,
+                    focusedBorderColor = Color.Black,
+                    unfocusedBorderColor = Color.Black
+                )
+            )
+            BackHandler(enabled = true) {
+                focusManager.clearFocus()
+            }
 
-            })
-
-            //Box(contentAlignment = Alignment.CenterEnd) {
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(Icons.Filled.Favorite, contentDescription = "save")
-                }
-            //}
-
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(Icons.Filled.Favorite, contentDescription = "save")
+            }
         }
+
         Web()
 
     }
@@ -113,18 +129,18 @@ fun Web() {
 @Composable
 fun Folder(screen: MutableState<Int>) {
     var listBranches = remember {
-            mutableStateListOf(
-                Branch(
-                    "root", mutableListOf(
-                        Branch(
-                            "first child", mutableListOf(
-                                Branch("thee branch")
-                            )
-                        ),
-                        Branch("second child")
-                    )
+        mutableStateListOf(
+            Branch(
+                "root", mutableListOf(
+                    Branch(
+                        "first child", mutableListOf(
+                            Branch("thee branch")
+                        )
+                    ),
+                    Branch("second child")
                 )
             )
+        )
 
     }
 
