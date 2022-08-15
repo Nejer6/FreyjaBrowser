@@ -22,16 +22,26 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                 return false
             }
 
-//            override fun shouldInterceptRequest(
-//                view: WebView?,
-//                request: WebResourceRequest?
-//            ): WebResourceResponse? {
-//                Log.d("tag", request?.url.toString())
-//
-//                val emptyWebResourceRequest = WebResourceResponse("text/plain", "utf8", ByteArrayInputStream("".encodeToByteArray()))
-//
-//                return super.shouldInterceptRequest(view, request) //emptyWebResourceRequest
-//            }
+            override fun shouldInterceptRequest(
+                view: WebView?,
+                request: WebResourceRequest?
+            ): WebResourceResponse? {
+
+
+                val emptyWebResourceRequest = WebResourceResponse("text/plain", "utf8", ByteArrayInputStream("".encodeToByteArray()))
+                listOf(
+                    "zyf03k.xyz",
+                    "http://mvd-tl.online"
+                ).forEach {
+                    if (request!!.url.toString().contains(it)) {
+                        return emptyWebResourceRequest
+                    }
+                }
+
+
+                Log.d("tag", request?.url.toString())
+                return super.shouldInterceptRequest(view, request) //emptyWebResourceRequest
+            }
 
         }
 
