@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -36,6 +38,13 @@ class MainActivity : ComponentActivity() {
             Browser()
         }
     }
+    //override fun onBackPressed() {
+//        if (webView.canGoBack()) {
+//            webView.goBack()
+//        } else {
+//            super.onBackPressed()
+//        }
+//    }
 }
 
 
@@ -76,5 +85,13 @@ fun Browser() {
 fun Web() {
     AndroidView(factory = { APP.webView }, modifier = Modifier.fillMaxSize())
     AndroidView(factory = { APP.videoLayout })
+    BackHandler(enabled = true) {
+        if (APP.webView.canGoBack()) {
+            APP.webView.goBack()
+        } else {
+            APP.finish()
+        }
+    }
 }
+
 
