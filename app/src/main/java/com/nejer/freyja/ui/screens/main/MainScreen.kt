@@ -1,26 +1,33 @@
 package com.nejer.freyja.ui.screens.main
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.nejer.freyja.APP
 import com.nejer.freyja.R
 import com.nejer.freyja.TopBar
+import com.nejer.freyja.ui.theme.DarkBlue
+import com.nejer.freyja.ui.theme.Orange
 
 @Composable
 fun Browser(screen: MutableState<Int>) {
@@ -33,34 +40,62 @@ fun Browser(screen: MutableState<Int>) {
 
             IconButton(onClick = { screen.value = 1 }) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_baseline_view_list_24),
-                    contentDescription = "archive"
+                    painter = painterResource(R.drawable.ic_chevron_left),
+                    contentDescription = "archive",
+                    tint = DarkBlue
                 )
             }
 
-            OutlinedTextField(
-                value = url,
-                modifier = Modifier.weight(1f),
-                onValueChange = {
-                    url = it
-                },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = {
-                    focusManager.clearFocus()
-                    APP.webView.loadUrl(url)
-                }),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    cursorColor = Color.Black,
-                    focusedBorderColor = Color.Black,
-                    unfocusedBorderColor = Color.Black
+            CompositionLocalProvider(
+                LocalTextSelectionColors provides TextSelectionColors(
+                    handleColor = Color.Transparent,
+                    backgroundColor = Color.Transparent
                 )
-            )
+            ) {
+                BasicTextField(
+                    modifier = Modifier
+                        .background(
+                            Orange,
+                            RoundedCornerShape(20.dp)
+                        )
+                        .weight(1f)
+                        .height(42.dp)
+                        .padding(start = 15.dp),
+                    value = url,
+                    onValueChange = {
+                        url = it
+                    },
+                    cursorBrush = SolidColor(DarkBlue),
+                    textStyle = LocalTextStyle.current.copy(
+                        fontSize = 15.sp,
+                        color = DarkBlue
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = {
+                        focusManager.clearFocus()
+                        APP.webView.loadUrl(url)
+                    }),
+                    decorationBox = { innerTextField ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            innerTextField()
+                        }
+                    }
+                )
+            }
+
+
             BackHandler(enabled = true) {
                 focusManager.clearFocus()
             }
 
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(Icons.Filled.Favorite, contentDescription = "save")
+            IconButton(
+                onClick = { /*TODO*/ }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_heart),
+                    contentDescription = "save",
+                    tint = DarkBlue
+                )
             }
         }
 
