@@ -2,6 +2,7 @@ package com.nejer.freyja
 
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,7 +27,12 @@ class MainActivity : ComponentActivity() {
         Log.d("tag", "activity activate")
 
         videoLayout = FrameLayout(this)
-        webView = MyWebView(this, videoLayout)
+        webView = MyWebView(this, videoLayout).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
 
         APP = this
 

@@ -41,7 +41,10 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                 val emptyWebResourceRequest = WebResourceResponse("text/plain", "utf8", ByteArrayInputStream("".encodeToByteArray()))
                 listOf(
                     "zyf03k.xyz",
-                    "http://mvd-tl.online"
+                    "http://mvd-tl.online",
+                    "i.bimbolive.com",
+                    "ht-cdn.trafficjunky.net",
+                    "hw-cdn2.adtng.com"
                 ).forEach {
                     if (request!!.url.toString().contains(it)) {
                         return emptyWebResourceRequest
