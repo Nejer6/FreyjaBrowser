@@ -1,5 +1,7 @@
 package com.nejer.freyja.ui.screens.main
 
+import android.graphics.Rect
+import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -48,8 +51,8 @@ fun Browser(screen: MutableState<Int>) {
 
             CompositionLocalProvider(
                 LocalTextSelectionColors provides TextSelectionColors(
-                    handleColor = Color.Transparent,
-                    backgroundColor = Color.Transparent
+                    handleColor = DarkBlue,
+                    backgroundColor = DarkBlue.copy(alpha = 0.3f)
                 )
             ) {
                 BasicTextField(
@@ -81,8 +84,11 @@ fun Browser(screen: MutableState<Int>) {
                         }
                     }
                 )
-            }
 
+                if (keyboardAsState().value == Keyboard.Closed) {
+                    focusManager.clearFocus()
+                }
+            }
 
             BackHandler(enabled = true) {
                 focusManager.clearFocus()
@@ -116,4 +122,35 @@ fun Web() {
             APP.finish()
         }
     }
+}
+
+
+enum class Keyboard {
+    Opened, Closed
+}
+
+@Composable
+fun keyboardAsState(): State<Keyboard> {
+    val keyboardState = remember { mutableStateOf(Keyboard.Closed) }
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val onGlobalListener = ViewTreeObserver.OnGlobalLayoutListener {
+            val rect = Rect()
+            view.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = view.rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+            keyboardState.value = if (keypadHeight > screenHeight * 0.15) {
+                Keyboard.Opened
+            } else {
+                Keyboard.Closed
+            }
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(onGlobalListener)
+
+        onDispose {
+            view.viewTreeObserver.removeOnGlobalLayoutListener(onGlobalListener)
+        }
+    }
+
+    return keyboardState
 }
