@@ -17,7 +17,6 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
@@ -36,9 +35,6 @@ import com.nejer.freyja.ui.theme.Orange
 fun Browser(screen: MutableState<Int>) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
-            var url by remember {
-                mutableStateOf("google.com")
-            }
             val focusManager = LocalFocusManager.current
 
             IconButton(onClick = { screen.value = 1 }) {
@@ -64,9 +60,9 @@ fun Browser(screen: MutableState<Int>) {
                         .weight(1f)
                         .height(42.dp)
                         .padding(start = 15.dp),
-                    value = url,
+                    value = APP.url.value,
                     onValueChange = {
-                        url = it
+                        APP.url.value = it
                     },
                     cursorBrush = SolidColor(DarkBlue),
                     textStyle = LocalTextStyle.current.copy(
@@ -76,7 +72,7 @@ fun Browser(screen: MutableState<Int>) {
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
                         focusManager.clearFocus()
-                        APP.webView.loadUrl(url)
+                        APP.webView.loadUrl(APP.url.value)
                     }),
                     decorationBox = { innerTextField ->
                         Row(verticalAlignment = Alignment.CenterVertically) {

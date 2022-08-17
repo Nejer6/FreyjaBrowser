@@ -1,6 +1,7 @@
 package com.nejer.freyja
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.util.Log
 import android.view.View
 import android.webkit.*
@@ -10,7 +11,7 @@ import java.io.ByteArrayInputStream
 
 class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(context) {
     init {
-        loadUrl("https://google.com")
+        loadUrl(APP.url.value)
         Log.d("tag", "first activate")
         settings.apply {
             useWideViewPort = true
@@ -20,6 +21,7 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
             allowFileAccess = true
             databaseEnabled = true
             mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
+            javaScriptCanOpenWindowsAutomatically = false
         }
 
 
@@ -29,31 +31,50 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
+                val url = request!!.url.toString()
+
+
                 return false
             }
+
+
 
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest?
             ): WebResourceResponse? {
-
-
                 val emptyWebResourceRequest = WebResourceResponse("text/plain", "utf8", ByteArrayInputStream("".encodeToByteArray()))
                 listOf(
                     "zyf03k.xyz",
                     "http://mvd-tl.online",
                     "i.bimbolive.com",
                     "ht-cdn.trafficjunky.net",
-                    "hw-cdn2.adtng.com"
+                    "hw-cdn2.adtng.com",
+                    "rf.bongacams25.com",
+                    "appzery.com"
                 ).forEach {
                     if (request!!.url.toString().contains(it)) {
                         return emptyWebResourceRequest
                     }
                 }
 
-
                 Log.d("tag", request?.url.toString())
+
                 return super.shouldInterceptRequest(view, request) //emptyWebResourceRequest
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+
+                val http = "http://"
+                val https = "https://"
+
+                if (url?.startsWith(http) == true) {
+                    APP.url.value = url.removePrefix(http)
+                }
+
+                if (url?.startsWith(https) == true) APP.url.value = url.removePrefix(https)
+
+                super.onPageStarted(view, url, favicon)
             }
 
         }
@@ -77,6 +98,8 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                 }
             }
         }
+
+
 
         true.also { settings.javaScriptEnabled = it }
     }

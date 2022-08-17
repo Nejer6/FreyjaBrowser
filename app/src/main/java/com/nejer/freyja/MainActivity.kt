@@ -22,12 +22,15 @@ import com.nejer.freyja.ui.screens.main.Browser
 import com.nejer.freyja.ui.theme.Yellow
 
 class MainActivity : ComponentActivity() {
+    val url = mutableStateOf("yandex.ru")
     lateinit var videoLayout: FrameLayout
     lateinit var webView: MyWebView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("tag", "activity activate")
+
+        APP = this
 
         videoLayout = FrameLayout(this)
         webView = MyWebView(this, videoLayout).apply {
@@ -36,8 +39,6 @@ class MainActivity : ComponentActivity() {
                 ViewGroup.LayoutParams.MATCH_PARENT
             )
         }
-
-        APP = this
 
         setContent {
             Navigation()
@@ -52,9 +53,7 @@ fun TopBar(content: @Composable () -> Unit = {}) {
         modifier = Modifier
             .background(Yellow)
             .fillMaxWidth()
-            .height(60.dp)
-
-            ,
+            .height(60.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         content()
