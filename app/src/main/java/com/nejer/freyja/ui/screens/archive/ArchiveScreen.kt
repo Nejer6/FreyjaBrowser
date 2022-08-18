@@ -1,11 +1,14 @@
 package com.nejer.freyja.ui.screens.archive
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -13,12 +16,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.nejer.freyja.APP
 import com.nejer.freyja.R
 import com.nejer.freyja.TopBar
 import com.nejer.freyja.models.Branch
+import com.nejer.freyja.ui.theme.DarkBlue
+import com.nejer.freyja.ui.theme.Orange
+import java.time.format.TextStyle
 
 @Composable
 fun Folder(screen: MutableState<Int>) {
@@ -28,10 +45,10 @@ fun Folder(screen: MutableState<Int>) {
                 "root", mutableListOf(
                     Branch(
                         "first child", mutableListOf(
-                            Branch("thee branch")
+                            Branch("google.com")
                         )
                     ),
-                    Branch("second child")
+                    Branch("youtube.com")
                 )
             )
         )
@@ -42,9 +59,21 @@ fun Folder(screen: MutableState<Int>) {
         items(
             listBranches.last().children
         ) { branch ->
-            Text(text = branch.value, modifier = Modifier.clickable {
-                listBranches.add(branch)
-            })
+            if (branch.children.size == 0) {
+                UrlCard(branch = branch, screen)
+            } else {
+                FolderCard(branch = branch, listBranches = listBranches)
+            }
+        }
+    }
+
+    if (listBranches.last().children.size == 0) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_searching),
+                contentDescription = "empty folder",
+                tint = Color.Unspecified
+            )
         }
     }
 
@@ -63,8 +92,9 @@ fun Archive(screen: MutableState<Int>) {
         TopBar {
             IconButton(onClick = { APP.onBackPressed() }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_arrow_back_24),
-                    contentDescription = "back to web"
+                    painter = painterResource(id = R.drawable.ic_vector),
+                    contentDescription = "back to web",
+                    tint = DarkBlue
                 )
             }
         }
@@ -72,4 +102,70 @@ fun Archive(screen: MutableState<Int>) {
         Folder(screen)
     }
 
+}
+
+
+@Composable
+fun Card(onClick: () -> Unit, content: @Composable () -> Unit = {}) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(70.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .clickable { onClick() }
+            .background(Orange)
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun FolderCard(branch: Branch, listBranches: SnapshotStateList<Branch>) {
+    Card(onClick = {
+        listBranches.add(branch)
+    }) {
+        Text(
+            text = branch.value,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 17.sp
+        )
+
+        Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
+
+        Row {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_document),
+                contentDescription = "elements inside",
+                tint = DarkBlue
+            )
+
+            Text(text = branch.children.size.toString())
+        }
+    }
+}
+
+@Composable
+fun UrlCard(branch: Branch, screen: MutableState<Int>) {
+    Card(onClick = {
+        APP.webView.loadUrl(branch.value)
+        APP.url.value = branch.value
+        screen.value = 0
+    }) {
+        Text(
+            text = branch.value,
+            modifier = Modifier.fillMaxWidth(),
+            fontSize = 17.sp
+        )
+
+        Icon(
+            painter = painterResource(id = R.drawable.ic_link),
+            contentDescription = "link",
+            tint = DarkBlue
+        )
+    }
 }
