@@ -29,16 +29,37 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.nejer.freyja.APP
 import com.nejer.freyja.R
 import com.nejer.freyja.TopBar
 import com.nejer.freyja.models.Branch
+import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
 import java.time.format.TextStyle
 
 @Composable
-fun Folder(screen: MutableState<Int>) {
+fun Archive(navController: NavHostController) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        TopBar {
+            IconButton(onClick = { APP.onBackPressed() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_vector),
+                    contentDescription = "back to web",
+                    tint = DarkBlue
+                )
+            }
+        }
+
+        Folder(navController)
+    }
+
+}
+
+@Composable
+fun Folder(navController: NavHostController) {
     val listBranches = remember {
         mutableStateListOf(
             Branch(
@@ -60,7 +81,7 @@ fun Folder(screen: MutableState<Int>) {
             listBranches.last().children
         ) { branch ->
             if (branch.children.size == 0) {
-                UrlCard(branch = branch, screen)
+                UrlCard(branch = branch, navController)
             } else {
                 FolderCard(branch = branch, listBranches = listBranches)
             }
@@ -81,29 +102,10 @@ fun Folder(screen: MutableState<Int>) {
         if (listBranches.size > 1) {
             listBranches.removeLast()
         } else {
-            screen.value = 0
+            navController.navigate(NavRoute.Main.route)
         }
     }
 }
-
-@Composable
-fun Archive(screen: MutableState<Int>) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBar {
-            IconButton(onClick = { APP.onBackPressed() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_vector),
-                    contentDescription = "back to web",
-                    tint = DarkBlue
-                )
-            }
-        }
-
-        Folder(screen)
-    }
-
-}
-
 
 @Composable
 fun Card(onClick: () -> Unit, content: @Composable () -> Unit = {}) {
@@ -150,11 +152,11 @@ fun FolderCard(branch: Branch, listBranches: SnapshotStateList<Branch>) {
 }
 
 @Composable
-fun UrlCard(branch: Branch, screen: MutableState<Int>) {
+fun UrlCard(branch: Branch, navController: NavHostController) {
     Card(onClick = {
         APP.webView.loadUrl(branch.value)
         APP.url.value = branch.value
-        screen.value = 0
+        navController.navigate(NavRoute.Main.route)
     }) {
         Text(
             text = branch.value,

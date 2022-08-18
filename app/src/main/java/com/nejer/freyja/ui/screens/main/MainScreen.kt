@@ -25,19 +25,21 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavHostController
 import com.nejer.freyja.APP
 import com.nejer.freyja.R
 import com.nejer.freyja.TopBar
+import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
 
 @Composable
-fun Browser(screen: MutableState<Int>) {
+fun Browser(navController: NavHostController) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
             val focusManager = LocalFocusManager.current
 
-            IconButton(onClick = { screen.value = 1 }) {
+            IconButton(onClick = { navController.navigate(NavRoute.Archive.route) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_left),
                     contentDescription = "archive",
