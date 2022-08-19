@@ -34,7 +34,7 @@ import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
 
 @Composable
-fun Browser(navController: NavHostController) {
+fun BrowserScreen(navController: NavHostController) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
             val focusManager = LocalFocusManager.current
