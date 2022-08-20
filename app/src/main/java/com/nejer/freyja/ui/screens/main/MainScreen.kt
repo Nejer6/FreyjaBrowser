@@ -1,6 +1,8 @@
 package com.nejer.freyja.ui.screens.main
 
+import android.app.Application
 import android.graphics.Rect
+import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -18,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -25,16 +28,24 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.nejer.freyja.APP
+import com.nejer.freyja.*
 import com.nejer.freyja.R
-import com.nejer.freyja.TopBar
 import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
 
 @Composable
 fun BrowserScreen(navController: NavHostController) {
+    val context = LocalContext.current
+    val mViewModel: MainViewModel = viewModel(
+        factory = MainViewModelFactory(context.applicationContext as Application)
+    )
+    mViewModel.initDatabase {
+        Log.d("tag", "init database")
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
             val focusManager = LocalFocusManager.current

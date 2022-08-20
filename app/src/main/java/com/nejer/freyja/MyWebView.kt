@@ -24,26 +24,24 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
             javaScriptCanOpenWindowsAutomatically = false
         }
 
-
-
         webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(
                 view: WebView?,
                 request: WebResourceRequest?
             ): Boolean {
-                val url = request!!.url.toString()
-
-
                 return false
             }
-
 
 
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest?
             ): WebResourceResponse? {
-                val emptyWebResourceRequest = WebResourceResponse("text/plain", "utf8", ByteArrayInputStream("".encodeToByteArray()))
+                val emptyWebResourceRequest = WebResourceResponse(
+                    "text/plain",
+                    "utf8",
+                    ByteArrayInputStream("".encodeToByteArray())
+                )
                 listOf(
                     "zyf03k.xyz",
                     "http://mvd-tl.online",
@@ -58,7 +56,7 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                     }
                 }
 
-                Log.d("tag", request?.url.toString())
+                //Log.d("tag", request?.url.toString())
 
                 return super.shouldInterceptRequest(view, request) //emptyWebResourceRequest
             }
@@ -98,8 +96,6 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                 }
             }
         }
-
-
 
         true.also { settings.javaScriptEnabled = it }
     }

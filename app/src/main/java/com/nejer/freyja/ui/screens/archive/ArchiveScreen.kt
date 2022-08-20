@@ -59,10 +59,12 @@ fun Folder(navController: NavHostController) {
                 "root", mutableListOf(
                     Branch(
                         "first child", mutableListOf(
-                            Branch("Жёсткое порево", mutableListOf(
-                                Branch("stackoverflow.com"),
-                                Branch("developer.android.com")
-                            )),
+                            Branch(
+                                "Жёсткое порево", mutableListOf(
+                                    Branch("stackoverflow.com"),
+                                    Branch("developer.android.com")
+                                )
+                            ),
                             Branch("google.com"),
                             Branch("yandex.ru")
                         )
@@ -71,7 +73,6 @@ fun Folder(navController: NavHostController) {
                 )
             )
         )
-
     }
 
     LazyColumn {
