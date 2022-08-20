@@ -1,19 +1,19 @@
 package com.nejer.freyja.database
 
 import androidx.lifecycle.LiveData
-import com.nejer.freyja.models.Folder
+import com.nejer.freyja.models.Url
 
 interface DatabaseRepository {
-    val readAll: LiveData<List<Folder>>
+    val readAll: LiveData<List<Url>>
 
-    suspend fun create(folder: Folder, onSuccess: () -> Unit)
+    suspend fun create(url: Url, onSuccess: () -> Unit)
 
-    suspend fun update(folder: Folder, onSuccess: () -> Unit)
+    suspend fun update(url: Url, onSuccess: () -> Unit)
 
-    suspend fun delete(folder: Folder, onSuccess: () -> Unit)
+    suspend fun delete(url: Url, onSuccess: () -> Unit)
 
-    fun exists(name: String): LiveData<Boolean>
+    fun exists(url: String): LiveData<Boolean>
 
-    suspend fun deleteByName(name: String, onSuccess: () -> Unit)
+    suspend fun deleteByName(url: String, onSuccess: () -> Unit)
 
 }

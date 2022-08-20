@@ -1,8 +1,6 @@
 package com.nejer.freyja.ui.screens.main
 
-import android.app.Application
 import android.graphics.Rect
-import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -21,7 +19,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -29,11 +26,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.nejer.freyja.*
+import com.nejer.freyja.APP
+import com.nejer.freyja.MainViewModel
 import com.nejer.freyja.R
-import com.nejer.freyja.models.Folder
+import com.nejer.freyja.TopBar
+import com.nejer.freyja.models.Url
 import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
@@ -66,7 +64,7 @@ fun BrowserScreen(navController: NavHostController, viewModel: MainViewModel) {
                         )
                         .weight(1f)
                         .height(42.dp)
-                        .padding(start = 15.dp),
+                        .padding(horizontal = 15.dp),
                     value = APP.url.value,
                     onValueChange = {
                         APP.url.value = it
@@ -113,9 +111,9 @@ private fun FavoriteButton(viewModel: MainViewModel) {
     IconButton(
         onClick = {
             if (isActive) {
-                viewModel.deleteFolderByName(name = APP.url.value) {}
+                viewModel.deleteFolderByName(url = APP.url.value) {}
             } else {
-                viewModel.addFolder(Folder(parentId = 0, name = APP.url.value)) {}
+                viewModel.addFolder(Url(url = APP.url.value)) {}
             }
         }
     ) {

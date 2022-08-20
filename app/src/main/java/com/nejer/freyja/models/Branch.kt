@@ -9,12 +9,15 @@ data class Branch(
     val children: MutableList<Branch> = mutableListOf()
 )
 
-@Entity(tableName = "folders_table")
-data class Folder(
+@Entity(tableName = "urls_table")
+data class Url(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     @ColumnInfo
-    val parentId: Int,
-    @ColumnInfo
-    val name: String = ""
+    val url: String = ""
+)
+
+data class Folder(
+    val value: String,
+    val children: MutableList<Folder>
 )

@@ -5,7 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.nejer.freyja.MainViewModel
-import com.nejer.freyja.ui.screens.archive.ArchiveScreen
+import com.nejer.freyja.ui.screens.archive.NewArchive
 import com.nejer.freyja.ui.screens.main.BrowserScreen
 
 sealed class NavRoute(val route: String) {
@@ -20,6 +20,6 @@ fun FreyjaNavHost(mViewModel: MainViewModel) {
 
     NavHost(navController = navController, startDestination = NavRoute.Main.route) {
         composable(NavRoute.Main.route) { BrowserScreen(navController = navController, viewModel = mViewModel) }
-        composable(NavRoute.Archive.route) { ArchiveScreen(navController = navController) }
+        composable(NavRoute.Archive.route) { NewArchive(navController = navController, viewModel = mViewModel) }
     }
 }

@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.nejer.freyja.database.room.dao.FolderRoomDao
-import com.nejer.freyja.models.Folder
+import com.nejer.freyja.database.room.dao.UrlRoomDao
+import com.nejer.freyja.models.Url
 
-@Database(entities = [Folder::class], version = 3)
+@Database(entities = [Url::class], version = 4)
 abstract class AppRoomDatabase : RoomDatabase() {
 
-    abstract fun getRoomDao(): FolderRoomDao
+    abstract fun getRoomDao(): UrlRoomDao
 
     companion object {
 

@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.nejer.freyja.database.room.AppRoomDatabase
 import com.nejer.freyja.database.room.repository.RoomRepository
-import com.nejer.freyja.models.Folder
+import com.nejer.freyja.models.Url
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel(application: Application): AndroidViewModel(application) {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val context = application
 
@@ -21,9 +21,9 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         onSuccess()
     }
 
-    fun addFolder(folder: Folder, onSuccess: () -> Unit) {
+    fun addFolder(url: Url, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            REPOSITORY.create(folder = folder) {
+            REPOSITORY.create(url = url) {
                 viewModelScope.launch(Dispatchers.Main) {
                     onSuccess()
                 }
@@ -31,11 +31,13 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun existsFolder(name: String) = REPOSITORY.exists(name = name)
+    fun getAllUrls() = REPOSITORY.readAll
 
-    fun deleteFolderByName(name: String, onSuccess: () -> Unit) {
+    fun existsFolder(url: String) = REPOSITORY.exists(url = url)
+
+    fun deleteFolderByName(url: String, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
-            REPOSITORY.deleteByName(name = name) {
+            REPOSITORY.deleteByName(url = url) {
                 viewModelScope.launch(Dispatchers.Main) {
                     onSuccess()
                 }
