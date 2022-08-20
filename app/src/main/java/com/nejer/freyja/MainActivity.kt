@@ -1,5 +1,6 @@
 package com.nejer.freyja
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import android.view.ViewGroup
@@ -14,13 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.nejer.freyja.navigation.FreyjaNavHost
 import com.nejer.freyja.ui.theme.Yellow
 
 class MainActivity : ComponentActivity() {
-    val url = mutableStateOf("yandex.ru")
+    val url = mutableStateOf("yandex.ru/")
     lateinit var videoLayout: FrameLayout
     lateinit var webView: MyWebView
 
@@ -39,12 +42,16 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            FreyjaNavHost()
+            val context = LocalContext.current
+            val mViewModel: MainViewModel = viewModel(
+                factory = MainViewModelFactory(context.applicationContext as Application)
+            )
+            mViewModel.initDatabase { Log.d("tag", "database initialized") }
+            FreyjaNavHost(mViewModel)
         }
     }
 }
 
-@Preview(showBackground = true, widthDp = 480, heightDp = 1040, device = "ZTE Blade Smart 20 API 28")
 @Composable
 fun TopBar(content: @Composable () -> Unit = {}) {
     Row(

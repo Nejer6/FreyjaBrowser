@@ -12,4 +12,8 @@ interface DatabaseRepository {
 
     suspend fun delete(folder: Folder, onSuccess: () -> Unit)
 
+    fun exists(name: String): LiveData<Boolean>
+
+    suspend fun deleteByName(name: String, onSuccess: () -> Unit)
+
 }

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.nejer.freyja.database.room.dao.FolderRoomDao
 import com.nejer.freyja.models.Folder
 
-@Database(entities = [Folder::class], version = 1)
+@Database(entities = [Folder::class], version = 3)
 abstract class AppRoomDatabase : RoomDatabase() {
 
     abstract fun getRoomDao(): FolderRoomDao
@@ -23,7 +23,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                     context,
                     AppRoomDatabase::class.java,
                     "folders_database"
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE as AppRoomDatabase
             } else INSTANCE as AppRoomDatabase
         }

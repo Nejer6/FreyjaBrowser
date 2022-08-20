@@ -11,13 +11,25 @@ class RoomRepository(private val folderRoomDao: FolderRoomDao) : DatabaseReposit
 
     override suspend fun create(folder: Folder, onSuccess: () -> Unit) {
         folderRoomDao.addFolder(folder = folder)
+        onSuccess()
     }
 
     override suspend fun update(folder: Folder, onSuccess: () -> Unit) {
         folderRoomDao.updateFolder(folder = folder)
+        onSuccess()
     }
 
     override suspend fun delete(folder: Folder, onSuccess: () -> Unit) {
         folderRoomDao.deleteFolder(folder = folder)
+        onSuccess()
+    }
+
+    override fun exists(name: String): LiveData<Boolean> {
+        return folderRoomDao.existsFolder(name = name)
+    }
+
+    override suspend fun deleteByName(name: String, onSuccess: () -> Unit) {
+        folderRoomDao.deleteFolderByName(name = name)
+        onSuccess()
     }
 }

@@ -16,6 +16,12 @@ interface FolderRoomDao {
     @Update
     suspend fun updateFolder(folder: Folder)
 
-    @Delete
+    @Delete()
     suspend fun deleteFolder(folder: Folder)
+
+    @Query("SELECT EXISTS (SELECT 1 FROM folders_table WHERE name = :name)")
+    fun existsFolder(name: String): LiveData<Boolean>
+
+    @Query("DELETE FROM folders_table WHERE name = :name")
+    suspend fun deleteFolderByName(name: String)
 }

@@ -17,6 +17,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
@@ -32,20 +33,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.nejer.freyja.*
 import com.nejer.freyja.R
+import com.nejer.freyja.models.Folder
 import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
 
 @Composable
-fun BrowserScreen(navController: NavHostController) {
-    val context = LocalContext.current
-    val mViewModel: MainViewModel = viewModel(
-        factory = MainViewModelFactory(context.applicationContext as Application)
-    )
-    mViewModel.initDatabase {
-        Log.d("tag", "init database")
-    }
-
+fun BrowserScreen(navController: NavHostController, viewModel: MainViewModel) {
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
             val focusManager = LocalFocusManager.current
@@ -103,21 +97,34 @@ fun BrowserScreen(navController: NavHostController) {
                 focusManager.clearFocus()
             }
 
-            IconButton(
-                onClick = { /*TODO*/ }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_heart),
-                    contentDescription = "save",
-                    tint = DarkBlue
-                )
-            }
+            FavoriteButton(viewModel)
         }
 
         Web()
 
     }
     AndroidView(factory = { APP.videoLayout })
+}
+
+@Composable
+private fun FavoriteButton(viewModel: MainViewModel) {
+    val isActive = viewModel.existsFolder(APP.url.value).observeAsState(true).value
+
+    IconButton(
+        onClick = {
+            if (isActive) {
+                viewModel.deleteFolderByName(name = APP.url.value) {}
+            } else {
+                viewModel.addFolder(Folder(parentId = 0, name = APP.url.value)) {}
+            }
+        }
+    ) {
+        Icon(
+            painter = painterResource(id = if (isActive) R.drawable.ic_filled_hearth else R.drawable.ic_heart),
+            contentDescription = "save",
+            tint = DarkBlue
+        )
+    }
 }
 
 @Composable
