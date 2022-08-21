@@ -1,6 +1,7 @@
 package com.nejer.freyja.ui.screens.main
 
 import android.graphics.Rect
+import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import com.nejer.freyja.ui.theme.Orange
 
 @Composable
 fun BrowserScreen(navController: NavHostController, viewModel: MainViewModel) {
+    Log.d("tag", "browser init")
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
             val focusManager = LocalFocusManager.current

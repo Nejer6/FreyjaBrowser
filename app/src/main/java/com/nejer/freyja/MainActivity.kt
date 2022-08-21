@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,7 +46,11 @@ class MainActivity : ComponentActivity() {
             val mViewModel: MainViewModel = viewModel(
                 factory = MainViewModelFactory(context.applicationContext as Application)
             )
+            /*todo*/
             mViewModel.initDatabase { Log.d("tag", "database initialized") }
+
+            mViewModel.changeFolder(mViewModel.getAllUrls().observeAsState(listOf()).value)
+
             FreyjaNavHost(mViewModel)
         }
     }

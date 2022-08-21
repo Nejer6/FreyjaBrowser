@@ -1,5 +1,6 @@
 package com.nejer.freyja.ui.screens.archive
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -11,10 +12,8 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +30,7 @@ import com.nejer.freyja.MainViewModel
 import com.nejer.freyja.R
 import com.nejer.freyja.TopBar
 import com.nejer.freyja.models.Branch
+import com.nejer.freyja.models.Folder
 import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
@@ -126,41 +126,14 @@ fun Card(onClick: () -> Unit, content: @Composable () -> Unit = {}) {
 }
 
 @Composable
-fun FolderCard(branch: Branch, listBranches: SnapshotStateList<Branch>) {
-    Card(onClick = {
-        listBranches.add(branch)
-    }) {
-        Text(
-            text = branch.value,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 17.sp
-        )
-
-        Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
-
-        Row {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_document),
-                contentDescription = "elements inside",
-                tint = DarkBlue
-            )
-
-            Text(text = branch.children.size.toString())
-        }
-    }
-}
-
-@Composable
-fun UrlCard(url: String, navController: NavHostController) {
+fun UrlCard(title: String, url: String, navController: NavHostController) {
     Card(onClick = {
         APP.webView.loadUrl(url)
         APP.url.value = url
         navController.navigate(NavRoute.Main.route)
     }) {
         Text(
-            text = url,
+            text = title,
             modifier = Modifier.fillMaxWidth(),
             fontSize = 17.sp
         )
@@ -195,9 +168,30 @@ private fun ColumnOfUrls(
     viewModel: MainViewModel,
     navController: NavHostController
 ) {
-    val urls = viewModel.getAllUrls().observeAsState(listOf()).value
 
-    if (urls.isEmpty()) {
+    FoldersColumn(navController, viewModel)
+}
+
+@Composable
+private fun FoldersColumn(
+    navController: NavHostController,
+    viewModel: MainViewModel
+) {
+
+    //Log.d("tag", "folder")
+    val currentFolder = remember {
+        mutableStateOf(viewModel.mainFolder)
+    }
+    Log.d("tag", currentFolder.value.toString())
+
+    //Log.d("tag", currentFolder.toList().toString())
+
+    val currentPath = remember {
+        mutableStateOf("")
+    }
+
+
+    if (currentFolder.value.children.isEmpty()) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_searching),
@@ -207,9 +201,69 @@ private fun ColumnOfUrls(
         }
     } else {
         LazyColumn {
-            items(urls) { url ->
-                UrlCard(url = url.url, navController = navController)
+            items(currentFolder.value.children) { folder ->
+
+                if (folder.children.isEmpty()) {
+                    UrlCard(url = currentPath.value + folder.value, navController = navController, title = folder.value)
+                } else {
+
+
+                    Card(onClick = {
+                        currentFolder.value = folder
+                        currentPath.value +="${folder.value}/"
+                    }) {
+                        Text(
+                            text = folder.value,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 17.sp
+                        )
+
+                        Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
+
+                        Row {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_document),
+                                contentDescription = "elements inside",
+                                tint = DarkBlue
+                            )
+
+                            Text(text = folder.children.size.toString())
+                        }
+                    }
+
+
+                }
+
             }
+        }
+    }
+}
+
+@Composable
+fun FolderCard(branch: Branch, listBranches: SnapshotStateList<Branch>) {
+    Card(onClick = {
+        listBranches.add(branch)
+    }) {
+        Text(
+            text = branch.value,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            fontSize = 17.sp
+        )
+
+        Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
+
+        Row {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_document),
+                contentDescription = "elements inside",
+                tint = DarkBlue
+            )
+
+            Text(text = branch.children.size.toString())
         }
     }
 }

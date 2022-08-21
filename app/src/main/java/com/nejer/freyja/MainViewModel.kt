@@ -1,12 +1,10 @@
 package com.nejer.freyja
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.nejer.freyja.database.room.AppRoomDatabase
 import com.nejer.freyja.database.room.repository.RoomRepository
+import com.nejer.freyja.models.Folder
 import com.nejer.freyja.models.Url
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,6 +12,8 @@ import kotlinx.coroutines.launch
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val context = application
+
+    var mainFolder: Folder = Folder()
 
     fun initDatabase(onSuccess: () -> Unit) {
         val dao = AppRoomDatabase.getInstance(context = context).getRoomDao()
@@ -45,6 +45,33 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun changeFolder(urls: List<Url>) {
+        val newMainFolder = Folder(value = "")
+        urls.forEach { url ->
+            var currentFolder = newMainFolder
+            val partsOfUrl = url.url.split("/").toMutableList()
+            if (partsOfUrl.last().isEmpty()) {
+                partsOfUrl.removeLast()
+            }
+
+            loop@ for (part in partsOfUrl) {
+
+                for (folder in currentFolder.children) {
+
+                    if (folder.value == part) {
+                        currentFolder = folder
+                        continue@loop
+                    }
+                }
+                val newFolder = Folder(value = part)
+                //Log.d("tag", newFolder.toString())
+                currentFolder.children.add(newFolder)
+                currentFolder = newFolder
+
+            }
+        }
+        mainFolder = newMainFolder
+    }
 }
 
 class MainViewModelFactory(private val application: Application) : ViewModelProvider.Factory {

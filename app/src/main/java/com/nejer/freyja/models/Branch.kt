@@ -18,6 +18,6 @@ data class Url(
 )
 
 data class Folder(
-    val value: String,
-    val children: MutableList<Folder>
+    val value: String = "",
+    val children: MutableList<Folder> = mutableListOf()
 )
