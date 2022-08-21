@@ -1,7 +1,5 @@
 package com.nejer.freyja.ui.screens.archive
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,8 +11,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,84 +25,116 @@ import com.nejer.freyja.APP
 import com.nejer.freyja.MainViewModel
 import com.nejer.freyja.R
 import com.nejer.freyja.TopBar
-import com.nejer.freyja.models.Branch
 import com.nejer.freyja.models.Folder
 import com.nejer.freyja.navigation.NavRoute
 import com.nejer.freyja.ui.theme.DarkBlue
 import com.nejer.freyja.ui.theme.Orange
 
-//@Composable
-//fun ArchiveScreen(navController: NavHostController) {
-//    Column(modifier = Modifier.fillMaxSize()) {
-//        TopBar {
-//            IconButton(onClick = { APP.onBackPressed() }) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_vector),
-//                    contentDescription = "back to web",
-//                    tint = DarkBlue
-//                )
-//            }
-//        }
-//
-//        Folder(navController)
-//    }
-//
-//}
+@Composable
+fun NewArchive(navController: NavHostController, viewModel: MainViewModel) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        val currentPath = remember {
+            mutableStateOf("")
+        }
 
-//@Composable
-//fun Folder(navController: NavHostController) {
-//    val listBranches = remember {
-//        mutableStateListOf(
-//            Branch(
-//                "root", mutableListOf(
-//                    Branch(
-//                        "first child", mutableListOf(
-//                            Branch(
-//                                "Жёсткое порево", mutableListOf(
-//                                    Branch("stackoverflow.com"),
-//                                    Branch("developer.android.com")
-//                                )
-//                            ),
-//                            Branch("google.com"),
-//                            Branch("yandex.ru")
-//                        )
-//                    ),
-//                    Branch("youtube.com")
-//                )
-//            )
-//        )
-//    }
-//
-//    LazyColumn {
-//        items(
-//            listBranches.last().children
-//        ) { branch ->
-//            if (branch.children.size == 0) {
-//                UrlCard(branch = branch, navController)
-//            } else {
-//                FolderCard(branch = branch, listBranches = listBranches)
-//            }
-//        }
-//    }
-//
-//    if (listBranches.last().children.size == 0) {
-//        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//            Icon(
-//                painter = painterResource(id = R.drawable.ic_searching),
-//                contentDescription = "empty folder",
-//                tint = Color.Unspecified
-//            )
-//        }
-//    }
-//
-//    BackHandler(enabled = true) {
-//        if (listBranches.size > 1) {
-//            listBranches.removeLast()
-//        } else {
-//            navController.navigate(NavRoute.Main.route)
-//        }
-//    }
-//}
+        TopBar {
+            IconButton(onClick = { APP.onBackPressed() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_vector),
+                    contentDescription = "back to web",
+                    tint = DarkBlue
+                )
+            }
+
+            Text(text = currentPath.value)
+        }
+
+        FoldersColumn(navController, viewModel, currentPath)
+    }
+}
+
+@Composable
+private fun FoldersColumn(
+    navController: NavHostController,
+    viewModel: MainViewModel,
+    currentPath: MutableState<String>,
+) {
+
+    val currentFolder = remember {
+        mutableStateOf(viewModel.mainFolder)
+    }
+
+    if (currentFolder.value.children.isEmpty()) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_searching),
+                contentDescription = "empty folder",
+                tint = Color.Unspecified
+            )
+        }
+    } else {
+        LazyColumn {
+            items(currentFolder.value.children) { folder ->
+
+                if (folder.children.isEmpty()) {
+                    UrlCard(
+                        url = currentPath.value + folder.value,
+                        navController = navController,
+                        title = folder.value
+                    )
+                } else {
+                    FolderCard(currentFolder, folder, currentPath, navController)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FolderCard(
+    currentFolder: MutableState<Folder>,
+    folder: Folder,
+    currentPath: MutableState<String>,
+    navController: NavHostController
+) {
+    Card(onClick = {
+        currentFolder.value = folder
+        currentPath.value += "${folder.value}/"
+    }) {
+        Row {
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = folder.value,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                )
+
+                Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
+
+                Row {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_document),
+                        contentDescription = "elements inside",
+                        tint = DarkBlue
+                    )
+
+                    Text(text = folder.children.size.toString())
+                }
+            }
+
+            IconButton(onClick = { clickOnUrl(url = currentPath.value + folder.value, navController = navController) }, modifier = Modifier.offset(10.dp)) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_link),
+                    contentDescription = "link",
+                    tint = DarkBlue
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun Card(onClick: () -> Unit, content: @Composable () -> Unit = {}) {
@@ -128,9 +156,7 @@ fun Card(onClick: () -> Unit, content: @Composable () -> Unit = {}) {
 @Composable
 fun UrlCard(title: String, url: String, navController: NavHostController) {
     Card(onClick = {
-        APP.webView.loadUrl(url)
-        APP.url.value = url
-        navController.navigate(NavRoute.Main.route)
+        clickOnUrl(url, navController)
     }) {
         Text(
             text = title,
@@ -146,124 +172,9 @@ fun UrlCard(title: String, url: String, navController: NavHostController) {
     }
 }
 
-@Composable
-fun NewArchive(navController: NavHostController, viewModel: MainViewModel) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        TopBar {
-            IconButton(onClick = { APP.onBackPressed() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_vector),
-                    contentDescription = "back to web",
-                    tint = DarkBlue
-                )
-            }
-        }
 
-        ColumnOfUrls(viewModel, navController)
-    }
-}
-
-@Composable
-private fun ColumnOfUrls(
-    viewModel: MainViewModel,
-    navController: NavHostController
-) {
-
-    FoldersColumn(navController, viewModel)
-}
-
-@Composable
-private fun FoldersColumn(
-    navController: NavHostController,
-    viewModel: MainViewModel
-) {
-
-    //Log.d("tag", "folder")
-    val currentFolder = remember {
-        mutableStateOf(viewModel.mainFolder)
-    }
-    Log.d("tag", currentFolder.value.toString())
-
-    //Log.d("tag", currentFolder.toList().toString())
-
-    val currentPath = remember {
-        mutableStateOf("")
-    }
-
-
-    if (currentFolder.value.children.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_searching),
-                contentDescription = "empty folder",
-                tint = Color.Unspecified
-            )
-        }
-    } else {
-        LazyColumn {
-            items(currentFolder.value.children) { folder ->
-
-                if (folder.children.isEmpty()) {
-                    UrlCard(url = currentPath.value + folder.value, navController = navController, title = folder.value)
-                } else {
-
-
-                    Card(onClick = {
-                        currentFolder.value = folder
-                        currentPath.value +="${folder.value}/"
-                    }) {
-                        Text(
-                            text = folder.value,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 17.sp
-                        )
-
-                        Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
-
-                        Row {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_document),
-                                contentDescription = "elements inside",
-                                tint = DarkBlue
-                            )
-
-                            Text(text = folder.children.size.toString())
-                        }
-                    }
-
-
-                }
-
-            }
-        }
-    }
-}
-
-@Composable
-fun FolderCard(branch: Branch, listBranches: SnapshotStateList<Branch>) {
-    Card(onClick = {
-        listBranches.add(branch)
-    }) {
-        Text(
-            text = branch.value,
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold,
-            fontSize = 17.sp
-        )
-
-        Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
-
-        Row {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_document),
-                contentDescription = "elements inside",
-                tint = DarkBlue
-            )
-
-            Text(text = branch.children.size.toString())
-        }
-    }
+private fun clickOnUrl(url: String, navController: NavHostController) {
+    APP.webView.loadUrl(url)
+    APP.url.value = url
+    navController.navigate(NavRoute.Main.route)
 }
