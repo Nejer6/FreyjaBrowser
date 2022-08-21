@@ -49,10 +49,15 @@ class MainActivity : ComponentActivity() {
             /*todo*/
             mViewModel.initDatabase { Log.d("tag", "database initialized") }
 
-            mViewModel.changeFolder(mViewModel.getAllUrls().observeAsState(listOf()).value)
+            GetUrls(mViewModel)
 
             FreyjaNavHost(mViewModel)
         }
+    }
+
+    @Composable
+    private fun GetUrls(mViewModel: MainViewModel) {
+        mViewModel.changeFolder(mViewModel.getAllUrls().observeAsState(listOf()).value)
     }
 }
 
