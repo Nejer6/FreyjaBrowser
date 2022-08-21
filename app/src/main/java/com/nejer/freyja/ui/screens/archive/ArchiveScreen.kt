@@ -1,5 +1,6 @@
 package com.nejer.freyja.ui.screens.archive
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -88,6 +89,12 @@ private fun FoldersColumn(
             }
         }
     }
+
+    val parent = currentFolder.value.parent
+    BackHandler(enabled = parent != null) {
+        currentPath.value = currentPath.value.removeSuffix(currentFolder.value.value + "/")
+        currentFolder.value = parent!!
+    }
 }
 
 @Composable
@@ -125,7 +132,12 @@ private fun FolderCard(
                 }
             }
 
-            IconButton(onClick = { clickOnUrl(url = currentPath.value + folder.value, navController = navController) }, modifier = Modifier.offset(10.dp)) {
+            IconButton(onClick = {
+                clickOnUrl(
+                    url = currentPath.value + folder.value,
+                    navController = navController
+                )
+            }, modifier = Modifier.offset(10.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_link),
                     contentDescription = "link",

@@ -63,7 +63,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         continue@loop
                     }
                 }
-                val newFolder = Folder(value = part)
+                val newFolder = Folder(value = part, parent = currentFolder)
                 //Log.d("tag", newFolder.toString())
                 currentFolder.children.add(newFolder)
                 currentFolder = newFolder
