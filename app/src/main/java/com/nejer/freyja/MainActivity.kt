@@ -11,6 +11,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.nejer.freyja.navigation.FreyjaNavHost
 
 class MainActivity : ComponentActivity() {
@@ -33,6 +34,10 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
+            val systemUiController = rememberSystemUiController()
+            systemUiController.setSystemBarsColor(
+                color = Constants.Colors.Yellow
+            )
             val context = LocalContext.current
             val mViewModel: MainViewModel = viewModel(
                 factory = MainViewModelFactory(context.applicationContext as Application)
