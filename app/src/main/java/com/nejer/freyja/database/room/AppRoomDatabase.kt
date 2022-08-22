@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.nejer.freyja.Constants
 import com.nejer.freyja.database.room.dao.UrlRoomDao
 import com.nejer.freyja.models.Url
 
@@ -22,7 +23,7 @@ abstract class AppRoomDatabase : RoomDatabase() {
                 INSTANCE = Room.databaseBuilder(
                     context,
                     AppRoomDatabase::class.java,
-                    "folders_database"
+                    Constants.Keys.FOLDERS_DATABASE
                 ).fallbackToDestructiveMigration().build()
                 INSTANCE as AppRoomDatabase
             } else INSTANCE as AppRoomDatabase

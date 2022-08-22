@@ -11,7 +11,10 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,14 +25,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.nejer.freyja.APP
-import com.nejer.freyja.MainViewModel
+import com.nejer.freyja.*
 import com.nejer.freyja.R
-import com.nejer.freyja.TopBar
 import com.nejer.freyja.models.Folder
 import com.nejer.freyja.navigation.NavRoute
-import com.nejer.freyja.ui.theme.DarkBlue
-import com.nejer.freyja.ui.theme.Orange
+import com.nejer.freyja.ui.screens.utils.TopBar
 
 @Composable
 fun NewArchive(navController: NavHostController, viewModel: MainViewModel) {
@@ -42,8 +42,8 @@ fun NewArchive(navController: NavHostController, viewModel: MainViewModel) {
             IconButton(onClick = { APP.onBackPressed() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_vector),
-                    contentDescription = "back to web",
-                    tint = DarkBlue
+                    contentDescription = Constants.Text.BACK_TO_WEB,
+                    tint = Constants.Colors.DarkBlue
                 )
             }
 
@@ -69,7 +69,7 @@ private fun FoldersColumn(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_searching),
-                contentDescription = "empty folder",
+                contentDescription = Constants.Text.EMPTY_FOLDER,
                 tint = Color.Unspecified
             )
         }
@@ -119,13 +119,13 @@ private fun FolderCard(
                     fontSize = 17.sp
                 )
 
-                Divider(color = DarkBlue.copy(0.3f), thickness = 1.dp)
+                Divider(color = Constants.Colors.DarkBlue.copy(0.3f), thickness = 1.dp)
 
                 Row {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_document),
-                        contentDescription = "elements inside",
-                        tint = DarkBlue
+                        contentDescription = Constants.Text.ELEMENTS_INSIDE,
+                        tint = Constants.Colors.DarkBlue
                     )
 
                     Text(text = folder.children.size.toString())
@@ -140,8 +140,8 @@ private fun FolderCard(
             }, modifier = Modifier.offset(10.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_link),
-                    contentDescription = "link",
-                    tint = DarkBlue
+                    contentDescription = Constants.Text.LINK,
+                    tint = Constants.Colors.DarkBlue
                 )
             }
         }
@@ -157,7 +157,7 @@ fun Card(onClick: () -> Unit, content: @Composable () -> Unit = {}) {
             .fillMaxWidth()
             .clip(RoundedCornerShape(20.dp))
             .clickable { onClick() }
-            .background(Orange)
+            .background(Constants.Colors.Orange)
             .padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
@@ -178,8 +178,8 @@ fun UrlCard(title: String, url: String, navController: NavHostController) {
 
         Icon(
             painter = painterResource(id = R.drawable.ic_link),
-            contentDescription = "link",
-            tint = DarkBlue
+            contentDescription = Constants.Text.LINK,
+            tint = Constants.Colors.DarkBlue
         )
     }
 }

@@ -12,7 +12,7 @@ import java.io.ByteArrayInputStream
 class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(context) {
     init {
         loadUrl(APP.url.value)
-        Log.d("tag", "first activate")
+
         settings.apply {
             useWideViewPort = true
             loadWithOverviewMode = true
@@ -22,6 +22,7 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
             databaseEnabled = true
             mixedContentMode = WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE
             javaScriptCanOpenWindowsAutomatically = false
+            userAgentString = Constants.WebViewSettings.USER_AGENT
         }
 
         webViewClient = object : WebViewClient() {
@@ -32,39 +33,31 @@ class MyWebView(context: Context, val videoLayout: FrameLayout) : WebView(contex
                 return false
             }
 
-
             override fun shouldInterceptRequest(
                 view: WebView?,
                 request: WebResourceRequest?
             ): WebResourceResponse? {
+                Log.d(Constants.Tags.URLS, request?.url.toString())
+
                 val emptyWebResourceRequest = WebResourceResponse(
-                    "text/plain",
-                    "utf8",
+                    Constants.WebViewSettings.MIME_TYPE,
+                    Constants.WebViewSettings.ENCODING,
                     ByteArrayInputStream("".encodeToByteArray())
                 )
-                listOf(
-                    "zyf03k.xyz",
-                    "http://mvd-tl.online",
-                    "i.bimbolive.com",
-                    "ht-cdn.trafficjunky.net",
-                    "hw-cdn2.adtng.com",
-                    "rf.bongacams25.com",
-                    "appzery.com"
-                ).forEach {
+
+                Constants.WebViewSettings.BLOCK_LIST.forEach {
                     if (request!!.url.toString().contains(it)) {
                         return emptyWebResourceRequest
                     }
                 }
 
-                //Log.d("tag", request?.url.toString())
-
-                return super.shouldInterceptRequest(view, request) //emptyWebResourceRequest
+                return super.shouldInterceptRequest(view, request)
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
 
-                val http = "http://"
-                val https = "https://"
+                val http = Constants.WebViewSettings.HTTP
+                val https = Constants.WebViewSettings.HTTPS
 
                 if (url?.startsWith(http) == true) {
                     APP.url.value = url.removePrefix(http)

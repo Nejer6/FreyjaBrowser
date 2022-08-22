@@ -4,13 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.nejer.freyja.Constants
 import com.nejer.freyja.MainViewModel
 import com.nejer.freyja.ui.screens.archive.NewArchive
 import com.nejer.freyja.ui.screens.main.BrowserScreen
 
 sealed class NavRoute(val route: String) {
-    object Main: NavRoute("main_screen")
-    object Archive: NavRoute("archive_screen")
+    object Main: NavRoute(Constants.Screens.MAIN_SCREEN)
+    object Archive: NavRoute(Constants.Screens.ARCHIVE_SCREEN)
     //object Folder: NavRoute("folder")
 }
 

@@ -1,7 +1,6 @@
 package com.nejer.freyja.ui.screens.main
 
 import android.graphics.Rect
-import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -28,18 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
-import com.nejer.freyja.APP
-import com.nejer.freyja.MainViewModel
+import com.nejer.freyja.*
 import com.nejer.freyja.R
-import com.nejer.freyja.TopBar
 import com.nejer.freyja.models.Url
 import com.nejer.freyja.navigation.NavRoute
-import com.nejer.freyja.ui.theme.DarkBlue
-import com.nejer.freyja.ui.theme.Orange
+import com.nejer.freyja.ui.screens.utils.TopBar
 
 @Composable
 fun BrowserScreen(navController: NavHostController, viewModel: MainViewModel) {
-    Log.d("tag", "browser init")
     Column(modifier = Modifier.fillMaxSize()) {
         TopBar {
             val focusManager = LocalFocusManager.current
@@ -47,21 +42,21 @@ fun BrowserScreen(navController: NavHostController, viewModel: MainViewModel) {
             IconButton(onClick = { navController.navigate(NavRoute.Archive.route) }) {
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_left),
-                    contentDescription = "archive",
-                    tint = DarkBlue
+                    contentDescription = Constants.Text.ARCHIVE,
+                    tint = Constants.Colors.DarkBlue
                 )
             }
 
             CompositionLocalProvider(
                 LocalTextSelectionColors provides TextSelectionColors(
-                    handleColor = DarkBlue,
-                    backgroundColor = DarkBlue.copy(alpha = 0.3f)
+                    handleColor = Constants.Colors.DarkBlue,
+                    backgroundColor = Constants.Colors.DarkBlue.copy(alpha = 0.3f)
                 )
             ) {
                 BasicTextField(
                     modifier = Modifier
                         .background(
-                            Orange,
+                            Constants.Colors.Orange,
                             RoundedCornerShape(20.dp)
                         )
                         .weight(1f)
@@ -71,10 +66,10 @@ fun BrowserScreen(navController: NavHostController, viewModel: MainViewModel) {
                     onValueChange = {
                         APP.url.value = it
                     },
-                    cursorBrush = SolidColor(DarkBlue),
+                    cursorBrush = SolidColor(Constants.Colors.DarkBlue),
                     textStyle = LocalTextStyle.current.copy(
                         fontSize = 15.sp,
-                        color = DarkBlue
+                        color = Constants.Colors.DarkBlue
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -121,8 +116,8 @@ private fun FavoriteButton(viewModel: MainViewModel) {
     ) {
         Icon(
             painter = painterResource(id = if (isActive) R.drawable.ic_filled_hearth else R.drawable.ic_heart),
-            contentDescription = "save",
-            tint = DarkBlue
+            contentDescription = Constants.Text.SAVE,
+            tint = Constants.Colors.DarkBlue
         )
     }
 }
